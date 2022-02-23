@@ -74,7 +74,17 @@ export default {
         rememberMe: false,
         code: '',
         uuid: ''
-      }
+      },
+      redirect: undefined
+    }
+  },
+  watch: {
+    $route: {
+      handler: function (route) {
+        console.log('gsdroute', route)
+        this.redirect = route.query && route.query.redirect
+      },
+      immediate: true
     }
   },
   created () {
@@ -95,9 +105,9 @@ export default {
         console.log('gsdvalid', valid)
         if (valid) {
           if (this.loginForm.rememberMe) {
-
           } else {
             this.$store.dispatch('Login', this.loginForm).then(() => {
+              this.$router.push({ path: this.redirect || '/' }).catch(() => {})
             })
           }
         }
