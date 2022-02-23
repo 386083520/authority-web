@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar-logo-container">
+    <div class="sidebar-logo-container" :style="{ backgroundColor: variables.menuBackground}">
       <router-link to="/" class="sidebar-logo-link">
         <img v-if="logo" :src="logo" class="sidebar-logo" />
         <h1 class="sidebar-title">{{title}}</h1>
@@ -9,12 +9,18 @@
 
 <script>
 import logoImg from '@/assets/logo/logo.png'
+import variables from '@/assets/styles/variables.scss'
 export default {
   name: 'Logo',
   data () {
     return {
       title: '若依管理系统',
       logo: logoImg
+    }
+  },
+  computed: {
+    variables () {
+      return variables
     }
   }
 }

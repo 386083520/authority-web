@@ -1,1 +1,8 @@
 $base-sidebar-width: 200px;
+$base-menu-color:#bfcbd9;
+$base-menu-background:#304156;
+
+:export {
+  menuColor: $base-menu-color;
+  menuBackground: $base-menu-background;
+}
