@@ -1,10 +1,14 @@
 <template>
-    <div>SideBar</div>
+    <div>
+      <logo></logo>
+    </div>
 </template>
 
 <script>
+import Logo from './Logo'
 export default {
-  name: 'SideBar'
+  name: 'SideBar',
+  components: { Logo }
 }
 </script>
 
