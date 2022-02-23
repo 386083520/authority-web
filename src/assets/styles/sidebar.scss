@@ -1,6 +1,12 @@
 #app {
   .sidebar-container {
+    position: fixed;
     width: $base-sidebar-width !important;
     height: 100%;
+  }
+  .main-container {
+    min-height: 100%;
+    margin-left: $base-sidebar-width;
+    background: #42b983;
   }
 }
