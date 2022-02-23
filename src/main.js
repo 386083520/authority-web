@@ -7,6 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 import '@/assets/styles/index.scss'
 
+import './assets/icons'
 import './permission' // permission control
 
 Vue.config.productionTip = false
