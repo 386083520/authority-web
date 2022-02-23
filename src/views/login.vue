@@ -29,7 +29,7 @@
         >
         </el-input>
         <div class="login-code">
-          <img :src="codeUrl" class="login-code-img"/>
+          <img :src="codeUrl" class="login-code-img" @click="getCode"/>
         </div>
       </el-form-item>
       <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
@@ -50,11 +50,14 @@
 </template>
 
 <script>
+import { getCodeImg } from '@/api/login'
 export default {
   name: 'login',
   data () {
     return {
       codeUrl: '',
+      // 验证码开关
+      captchaOnOff: true,
       loginForm: {
         username: 'admin',
         password: 'admin123',
@@ -62,6 +65,20 @@ export default {
         code: '',
         uuid: ''
       }
+    }
+  },
+  created () {
+    this.getCode()
+  },
+  methods: {
+    getCode () {
+      getCodeImg().then(res => {
+        console.log('gsdres', res)
+        this.captchaOnOff = res.captchaOnOff === undefined ? true : res.captchaOnOff
+        if (this.captchaOnOff) {
+          this.codeUrl = 'data:image/gif;base64,' + res.img
+        }
+      })
     }
   }
 }
@@ -103,6 +120,10 @@ export default {
   width: 33%;
   height: 38px;
   float: right;
+  img {
+    cursor: pointer;
+    vertical-align: middle;
+  }
 }
 .login-code-img {
   height: 38px;
