@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <el-form ref="loginForm" class="login-form" :model="loginForm">
+    <el-form ref="loginForm" class="login-form" :model="loginForm" :rules="loginRules">
       <h3 class="title">若依后台管理系统</h3>
       <el-form-item prop="username">
         <el-input
@@ -38,6 +38,7 @@
           size="medium"
           type="primary"
           style="width:100%;"
+          @click.native.prevent="handleLogin"
         >
           <span>登 录</span>
         </el-button>
@@ -58,6 +59,15 @@ export default {
       codeUrl: '',
       // 验证码开关
       captchaOnOff: true,
+      loginRules: {
+        username: [
+          { required: true, trigger: 'blur', message: '请输入您的账号' }
+        ],
+        password: [
+          { required: true, trigger: 'blur', message: '请输入您的密码' }
+        ],
+        code: [{ required: true, trigger: 'change', message: '请输入验证码' }]
+      },
       loginForm: {
         username: 'admin',
         password: 'admin123',
@@ -73,10 +83,23 @@ export default {
   methods: {
     getCode () {
       getCodeImg().then(res => {
-        console.log('gsdres', res)
         this.captchaOnOff = res.captchaOnOff === undefined ? true : res.captchaOnOff
         if (this.captchaOnOff) {
           this.codeUrl = 'data:image/gif;base64,' + res.img
+          this.loginForm.uuid = res.uuid
+        }
+      })
+    },
+    handleLogin () {
+      this.$refs.loginForm.validate(valid => {
+        console.log('gsdvalid', valid)
+        if (valid) {
+          if (this.loginForm.rememberMe) {
+
+          } else {
+            this.$store.dispatch('Login', this.loginForm).then(() => {
+            })
+          }
         }
       })
     }
