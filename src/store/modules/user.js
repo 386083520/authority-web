@@ -4,9 +4,24 @@ import { getToken, setToken } from '@/utils/auth'
 const user = {
   state: {
     token: getToken(),
-    roles: []
+    name: '',
+    avatar: '',
+    roles: [],
+    permissions: []
   },
   mutations: {
+    SET_NAME: (state, name) => {
+      state.name = name
+    },
+    SET_AVATAR: (state, avatar) => {
+      state.avatar = avatar
+    },
+    SET_ROLES: (state, roles) => {
+      state.roles = roles
+    },
+    SET_PERMISSIONS: (state, permissions) => {
+      state.permissions = permissions
+    },
     SET_TOKEN: (state, token) => {
       state.token = token
     }
@@ -31,7 +46,17 @@ const user = {
     GetInfo ({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo().then(res => {
-          console.log('gsdGetInfo', res)
+          const user = res.user
+          const avatar = user.avatar === '' ? require('@/assets/images/profile.jpg') : process.env.VUE_APP_BASE_API + user.avatar
+          if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+            commit('SET_ROLES', res.roles)
+            commit('SET_PERMISSIONS', res.permissions)
+          } else {
+            commit('SET_ROLES', ['ROLE_DEFAULT'])
+          }
+          commit('SET_NAME', user.userName)
+          commit('SET_AVATAR', avatar)
+          resolve(res)
         })
       })
     }
