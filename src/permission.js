@@ -13,6 +13,7 @@ router.beforeEach((to, from, next) => {
         store.dispatch('GetInfo').then(() => {
           store.dispatch('GenerateRoutes').then(accessRoutes => {
             console.log('gsdaccessRoutes', accessRoutes)
+            router.addRoutes(accessRoutes) // 动态添加可访问路由表
             next({ ...to })
           })
         }).catch(err => {

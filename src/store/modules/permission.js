@@ -1,5 +1,6 @@
 import { getRouters } from '@/api/menu'
 import { constantRoutes } from '@/router'
+import Layout from '@/layout/index'
 
 export const loadView = (view) => {
   return (resolve) => require([`@/views/${view}`], resolve)
@@ -9,7 +10,15 @@ export const loadView = (view) => {
 function filterAsyncRouter (asyncRouterMap, lastRouter = false, type = false) {
   return asyncRouterMap.filter(route => {
     if (route.component) {
-      route.component = loadView(route.component)
+      // Layout ParentView 组件特殊处理
+      if (route.component === 'Layout') {
+        route.component = Layout
+      } else {
+        route.component = loadView(route.component)
+      }
+    }
+    if (route.children != null && route.children && route.children.length) {
+      route.children = filterAsyncRouter(route.children, route, type)
     }
     return true
   })
