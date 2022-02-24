@@ -1,5 +1,6 @@
 <template>
   <section class="app-main">
+    {{key}}
     <router-view :key="key" />
   </section>
 </template>
@@ -9,9 +10,11 @@ export default {
   name: 'AppMain',
   data () {
     return {
-      key () {
-        return this.$route.path
-      }
+    }
+  },
+  computed: {
+    key () {
+      return this.$route.path
     }
   }
 }

@@ -13,6 +13,7 @@ router.beforeEach((to, from, next) => {
         store.dispatch('GetInfo').then(() => {
           store.dispatch('GenerateRoutes').then(accessRoutes => {
             console.log('gsdaccessRoutes', accessRoutes)
+            next({ ...to })
           })
         }).catch(err => {
           console.log(err)
