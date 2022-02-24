@@ -3,6 +3,9 @@
     position: fixed;
     width: $base-sidebar-width !important;
     height: 100%;
+    .svg-icon {
+      margin-right: 16px;
+    }
   }
   .main-container {
     min-height: 100%;
