@@ -22,6 +22,7 @@ const permission = {
   mutations: {
     SET_SIDEBAR_ROUTERS: (state, routes) => {
       state.sidebarRouters = routes
+      console.log('gsd123', state.sidebarRouters)
     }
   },
   actions: {
