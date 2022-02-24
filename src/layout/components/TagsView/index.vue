@@ -1,13 +1,56 @@
 <template>
-    <div>TagsView</div>
+    <div class="tags-view-container">
+      <scroll-pane class="tags-view-wrapper">
+        <router-link
+          v-for="tag in visitedViews"
+          :to="{ path: tag.path }"
+          :key="tag.path"
+          class="tags-view-item">
+          {{tag.title}}
+        </router-link>
+      </scroll-pane>
+    </div>
 </template>
 
 <script>
+import ScrollPane from './ScrollPane'
 export default {
-  name: 'TagsView'
+  name: 'TagsView',
+  components: { ScrollPane },
+  computed: {
+    visitedViews () {
+      return this.$store.state.tagsView.visitedViews
+    }
+  }
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+.tags-view-container {
+  height: 34px;
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #d8dce5;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
+  .tags-view-wrapper {
+    .tags-view-item {
+      display: inline-block;
+      height: 26px;
+      line-height: 26px;
+      border: 1px solid #d8dce5;
+      color: #495060;
+      background: #fff;
+      padding: 0 8px;
+      font-size: 12px;
+      margin-left: 5px;
+      margin-top: 4px;
+      &:first-of-type {
+        margin-left: 15px;
+      }
+      &:last-of-type {
+        margin-right: 15px;
+      }
+    }
+  }
+}
 </style>
