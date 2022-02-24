@@ -3,11 +3,22 @@ import path from "path";
   <div v-if="!item.hidden">
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren) && !item.alwaysShow" >
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, onlyOneChild.query)">
-        <el-menu-item>
+        <el-menu-item :index="resolvePath(onlyOneChild.path)">
           <menu-item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title"></menu-item>
         </el-menu-item>
       </app-link>
     </template>
+    <el-submenu v-else :index="resolvePath(item.path)">
+      <template slot="title">
+        <menu-item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" ></menu-item>
+      </template>
+      <sidebar-item
+        v-for="child in item.children"
+        :key="child.path"
+        :item="child"
+        :base-path="resolvePath(child.path)">
+      </sidebar-item>
+    </el-submenu>
   </div>
 </template>
 
