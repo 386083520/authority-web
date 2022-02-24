@@ -7,7 +7,7 @@
         <tags-view></tags-view>
       </div>
       <app-main></app-main>
-      <right-panel></right-panel>
+      <right-panel v-if="false"></right-panel>
     </div>
   </div>
 </template>
