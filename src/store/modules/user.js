@@ -1,9 +1,10 @@
-import { login } from '@/api/login'
+import { login, getInfo } from '@/api/login'
 import { getToken, setToken } from '@/utils/auth'
 
 const user = {
   state: {
-    token: getToken()
+    token: getToken(),
+    roles: []
   },
   mutations: {
     SET_TOKEN: (state, token) => {
@@ -23,6 +24,14 @@ const user = {
           resolve()
         }).catch(error => {
           reject(error)
+        })
+      })
+    },
+    // 获取用户信息
+    GetInfo ({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        getInfo().then(res => {
+          console.log('gsdGetInfo', res)
         })
       })
     }

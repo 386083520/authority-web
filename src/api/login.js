@@ -29,3 +29,11 @@ export function login (username, password, code, uuid) {
     data: data
   })
 }
+
+// 获取用户详细信息
+export function getInfo () {
+  return request({
+    url: '/getInfo',
+    method: 'get'
+  })
+}
