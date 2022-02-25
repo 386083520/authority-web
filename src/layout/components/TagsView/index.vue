@@ -7,6 +7,7 @@
           :key="tag.path"
           class="tags-view-item">
           {{tag.title}}
+          <span class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)"/>
         </router-link>
       </scroll-pane>
     </div>
@@ -34,6 +35,9 @@ export default {
         this.$store.dispatch('tagsView/addView', this.$route)
       }
       return false
+    },
+    closeSelectedTag (view) {
+      this.$tab.closePage(view)
     }
   }
 }
@@ -67,4 +71,26 @@ export default {
     }
   }
 }
+</style>
+<style lang="scss">
+  .tags-view-wrapper {
+    .tags-view-item {
+      .el-icon-close {
+        width: 16px;
+        height: 16px;
+        vertical-align: 2px;
+        border-radius: 50%;
+        text-align: center;
+        &:before {
+          transform: scale(.6);
+          display: inline-block;
+          vertical-align: -3px;
+        }
+        &:hover {
+          background-color: #b4bccc;
+          color: #fff;
+        }
+      }
+    }
+  }
 </style>
