@@ -10,10 +10,26 @@
         <el-tooltip content="文档地址" effect="dark" placement="bottom">
           <ruo-yi-doc class="right-menu-item"></ruo-yi-doc>
         </el-tooltip>
+        <screenfull class="right-menu-item"></screenfull>
         <el-tooltip content="布局大小" effect="dark" placement="bottom">
-          <div class="right-menu-item">布局大小</div>
+          <size-select class="right-menu-item"></size-select>
         </el-tooltip>
       </template>
+      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
+        <div class="avatar-wrapper">
+          <img :src="avatar" class="user-avatar">
+          <i class="el-icon-caret-bottom" />
+        </div>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item>个人中心</el-dropdown-item>
+          <el-dropdown-item>
+            <span>布局设置</span>
+          </el-dropdown-item>
+          <el-dropdown-item divided>
+            <span>退出登录</span>
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
   </div>
 </template>
@@ -23,6 +39,9 @@ import Breadcrumb from '@/components/Breadcrumb'
 import RuoYiGit from '../../components/RuoYi/Git/index'
 import RuoYiDoc from '../../components/RuoYi/Doc/index'
 import Hamburger from '../../components/Hamburger/index'
+import Screenfull from '@/components/Screenfull'
+import SizeSelect from '@/components/SizeSelect'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'NavBar',
@@ -30,7 +49,14 @@ export default {
     RuoYiGit,
     RuoYiDoc,
     Breadcrumb,
-    Hamburger
+    Hamburger,
+    Screenfull,
+    SizeSelect
+  },
+  computed: {
+    ...mapGetters([
+      'avatar'
+    ])
   }
 }
 </script>
@@ -56,6 +82,25 @@ export default {
       font-size: 18px;
       color: #5a5e66;
       vertical-align: text-bottom;
+    }
+  }
+  .avatar-container {
+    margin-right: 30px;
+    .avatar-wrapper {
+      margin-top: 5px;
+      .user-avatar {
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+      }
+      .el-icon-caret-bottom {
+        cursor: pointer;
+        position: absolute;
+        right: -20px;
+        top: 25px;
+        font-size: 12px;
+      }
     }
   }
 }
