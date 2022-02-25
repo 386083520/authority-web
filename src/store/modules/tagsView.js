@@ -1,16 +1,27 @@
 const state = {
-  visitedViews: [{
-    title: '首页',
-    path: 'test1'
-  }, {
-    title: 'test2',
-    path: 'test2'
-  }]
+  visitedViews: []
 }
 
-const mutations = {}
+const mutations = {
+  ADD_VISITED_VIEW: (state, view) => {
+    if (state.visitedViews.some(v => v.path === view.path)) return
+    state.visitedViews.push(
+      Object.assign({}, view, {
+        title: view.meta.title || 'no-name'
+      })
+    )
+    console.log('gsdvisitedViews', state.visitedViews)
+  }
+}
 
-const actions = {}
+const actions = {
+  addView ({ dispatch }, view) {
+    dispatch('addVisitedView', view)
+  },
+  addVisitedView ({ commit }, view) {
+    commit('ADD_VISITED_VIEW', view)
+  }
+}
 
 export default {
   namespaced: true,

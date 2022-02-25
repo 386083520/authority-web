@@ -17,9 +17,23 @@ import ScrollPane from './ScrollPane'
 export default {
   name: 'TagsView',
   components: { ScrollPane },
+  watch: {
+    $route () {
+      this.addTags()
+    }
+  },
   computed: {
     visitedViews () {
       return this.$store.state.tagsView.visitedViews
+    }
+  },
+  methods: {
+    addTags () {
+      const { name } = this.$route
+      if (name) {
+        this.$store.dispatch('tagsView/addView', this.$route)
+      }
+      return false
     }
   }
 }
