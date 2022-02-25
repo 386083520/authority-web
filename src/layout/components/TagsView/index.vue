@@ -1,3 +1,4 @@
+import path from "path";
 <template>
     <div class="tags-view-container">
       <scroll-pane class="tags-view-wrapper">
@@ -8,23 +9,31 @@
           :class="isActive(tag)?'active':''"
           class="tags-view-item">
           {{tag.title}}
-          <span class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)"/>
+          <span v-if="!isAffix(tag)" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)"/>
         </router-link>
       </scroll-pane>
     </div>
 </template>
 
 <script>
+import path from 'path'
 import ScrollPane from './ScrollPane'
 export default {
   name: 'TagsView',
   components: { ScrollPane },
+  mounted () {
+    this.initTags()
+    this.addTags()
+  },
   watch: {
     $route () {
       this.addTags()
     }
   },
   computed: {
+    routes () {
+      return this.$store.state.permission.routes
+    },
     visitedViews () {
       return this.$store.state.tagsView.visitedViews
     }
@@ -42,6 +51,38 @@ export default {
     },
     closeSelectedTag (view) {
       this.$tab.closePage(view)
+    },
+    isAffix (tag) {
+      return tag.meta && tag.meta.affix
+    },
+    initTags () {
+      const affixTags = this.filterAffixTags(this.routes)
+      for (const tag of affixTags) {
+        if (tag.name) {
+          this.$store.dispatch('tagsView/addVisitedView', tag)
+        }
+      }
+    },
+    filterAffixTags (routes, basePath = '/') {
+      let tags = []
+      routes.forEach(route => {
+        if (route.meta && route.meta.affix) {
+          const tagPath = path.resolve(basePath, route.path)
+          tags.push({
+            fullPath: tagPath,
+            path: tagPath,
+            name: route.name,
+            meta: { ...route.meta }
+          })
+        }
+        if (route.children) {
+          const tempTags = this.filterAffixTags(route.children, route.path)
+          if (tempTags.length >= 1) {
+            tags = [...tags, ...tempTags]
+          }
+        }
+      })
+      return tags
     }
   }
 }

@@ -26,9 +26,13 @@ function filterAsyncRouter (asyncRouterMap, lastRouter = false, type = false) {
 
 const permission = {
   state: {
+    routes: [],
     sidebarRouters: []
   },
   mutations: {
+    SET_ROUTES: (state, routes) => {
+      state.routes = constantRoutes.concat(routes)
+    },
     SET_SIDEBAR_ROUTERS: (state, routes) => {
       state.sidebarRouters = routes
       console.log('gsd123', state.sidebarRouters)
@@ -44,6 +48,7 @@ const permission = {
           const rdata = JSON.parse(JSON.stringify(res.data))
           const sidebarRoutes = filterAsyncRouter(sdata)
           const rewriteRoutes = filterAsyncRouter(rdata, false, true)
+          commit('SET_ROUTES', rewriteRoutes)
           commit('SET_SIDEBAR_ROUTERS', constantRoutes.concat(sidebarRoutes))
           resolve(rewriteRoutes)
         })
