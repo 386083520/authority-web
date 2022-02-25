@@ -5,6 +5,7 @@
           v-for="tag in visitedViews"
           :to="{ path: tag.path }"
           :key="tag.path"
+          :class="isActive(tag)?'active':''"
           class="tags-view-item">
           {{tag.title}}
           <span class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)"/>
@@ -29,6 +30,9 @@ export default {
     }
   },
   methods: {
+    isActive (route) {
+      return route.path === this.$route.path
+    },
     addTags () {
       const { name } = this.$route
       if (name) {
@@ -67,6 +71,21 @@ export default {
       }
       &:last-of-type {
         margin-right: 15px;
+      }
+      &.active {
+        background-color: #42b983;
+        color: #fff;
+        border-color: #42b983;
+        &::before {
+          content: '';
+          background: #fff;
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          position: relative;
+          margin-right: 2px;
+        }
       }
     }
   }
