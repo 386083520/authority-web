@@ -1,6 +1,5 @@
 <template>
   <section class="app-main">
-    {{key}}
     <router-view :key="key" />
   </section>
 </template>

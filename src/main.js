@@ -5,14 +5,24 @@ import store from './store'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
+// 自定义表格工具组件
+import RightToolbar from '@/components/RightToolbar'
+
+import { addDateRange } from '@/utils/ruoyi'
+
 import plugins from './plugins' // plugins
 
 import '@/assets/styles/index.scss'
+import '@/assets/styles/ruoyi.scss'
 
 import './assets/icons'
 import './permission' // permission control
 
 Vue.config.productionTip = false
+
+Vue.component('RightToolbar', RightToolbar)
+
+Vue.prototype.addDateRange = addDateRange
 
 Vue.use(Element)
 Vue.use(plugins)
