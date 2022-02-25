@@ -7,6 +7,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 // 自定义表格工具组件
 import RightToolbar from '@/components/RightToolbar'
+// 字典数据组件
+import DictData from '@/components/DictData'
 
 import { addDateRange } from '@/utils/ruoyi'
 
@@ -26,6 +28,7 @@ Vue.prototype.addDateRange = addDateRange
 
 Vue.use(Element)
 Vue.use(plugins)
+DictData.install()
 
 new Vue({
   router,

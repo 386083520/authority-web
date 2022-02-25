@@ -56,6 +56,12 @@
               size="small"
               style="width: 240px"
             >
+              <el-option
+                v-for="dict in dict.type.sys_normal_disable"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="创建时间">
@@ -168,6 +174,7 @@ import { treeselect } from '@/api/system/dept'
 import { listUser } from '@/api/system/user'
 export default {
   name: 'user',
+  dicts: ['sys_normal_disable', 'sys_user_sex'],
   created () {
     this.getList()
     this.getTreeselect()
