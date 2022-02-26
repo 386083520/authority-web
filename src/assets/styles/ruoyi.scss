@@ -6,3 +6,8 @@
   position: relative;
   float: right;
 }
+
+.pagination-container .el-pagination {
+  right: 0;
+  position: absolute;
+}

@@ -164,6 +164,13 @@
             </template>
           </el-table-column>
         </el-table>
+        <pagination
+          v-show="total>0"
+          :total="total"
+          :page.sync="queryParams.pageNum"
+          :limit.sync="queryParams.pageSize"
+          @pagination="getList">
+        </pagination>
       </el-col>
     </el-row>
   </div>
@@ -207,7 +214,9 @@ export default {
         deptId: undefined
       },
       // 用户表格数据
-      userList: null
+      userList: null,
+      // 总条数
+      total: 0
     }
   },
   methods: {
@@ -235,6 +244,7 @@ export default {
     getList () {
       listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
         this.userList = response.rows
+        this.total = response.total
       })
     }
   }

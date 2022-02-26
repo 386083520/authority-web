@@ -7,6 +7,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 // 自定义表格工具组件
 import RightToolbar from '@/components/RightToolbar'
+// 分页组件
+import Pagination from '@/components/Pagination'
 // 字典数据组件
 import DictData from '@/components/DictData'
 
@@ -23,6 +25,7 @@ import './permission' // permission control
 Vue.config.productionTip = false
 
 Vue.component('RightToolbar', RightToolbar)
+Vue.component('Pagination', Pagination)
 
 Vue.prototype.addDateRange = addDateRange
 

@@ -1,0 +1,99 @@
+<template>
+  <div :class="{'hidden':hidden}" class="pagination-container">
+    <el-pagination
+      :background="background"
+      :current-page.sync="currentPage"
+      :page-size.sync="pageSize"
+      :layout="layout"
+      :page-sizes="pageSizes"
+      :pager-count="pagerCount"
+      :total="total"
+      v-bind="$attrs"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange">
+
+    </el-pagination>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Pagination',
+  props: {
+    total: {
+      required: true,
+      type: Number
+    },
+    limit: {
+      type: Number,
+      default: 20
+    },
+    page: {
+      type: Number,
+      default: 1
+    },
+    background: {
+      type: Boolean,
+      default: true
+    },
+    hidden: {
+      type: Boolean,
+      default: false
+    },
+    layout: {
+      type: String,
+      default: 'total, sizes, prev, pager, next, jumper'
+    },
+    pageSizes: {
+      type: Array,
+      default () {
+        return [10, 20, 30, 50]
+      }
+    },
+    // 移动端页码按钮的数量端默认值5
+    pagerCount: {
+      type: Number,
+      default: document.body.clientWidth < 992 ? 5 : 7
+    }
+  },
+  computed: {
+    currentPage: {
+      get () {
+        return this.page
+      },
+      set (val) {
+        this.$emit('update:page', val)
+      }
+    },
+    pageSize: {
+      get () {
+        return this.limit
+      },
+      set (val) {
+        this.$emit('update:limit', val)
+      }
+    }
+  },
+  methods: {
+    handleSizeChange (val) {
+      if (this.currentPage * val > this.total) {
+        this.currentPage = 1
+      }
+      this.$emit('pagination', { page: this.currentPage, limit: val })
+    },
+    handleCurrentChange (val) {
+      this.$emit('pagination', { page: val, limit: this.pageSize })
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .pagination-container {
+    background: #fff;
+    padding: 32px 16px;
+  }
+  .pagination-container.hidden {
+    display: none;
+  }
+</style>
