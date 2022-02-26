@@ -43,3 +43,16 @@ export function delUser (userId) {
     method: 'delete'
   })
 }
+
+// 用户密码重置
+export function resetUserPwd (userId, password) {
+  const data = {
+    userId,
+    password
+  }
+  return request({
+    url: '/system/user/resetPwd',
+    method: 'put',
+    data: data
+  })
+}

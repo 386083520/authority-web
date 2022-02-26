@@ -153,7 +153,7 @@
           <el-table-column
             label="操作"
             align="center"
-            width="160"
+            width="200"
             class-name="small-padding fixed-width">
             <template slot-scope="scope" v-if="scope.row.userId !== 1">
               <el-button
@@ -168,6 +168,17 @@
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
               >删除</el-button>
+              <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
+                <span class="el-dropdown-link">
+                  <i class="el-icon-d-arrow-right el-icon--right"></i>更多
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="handleResetPwd" icon="el-icon-key"
+                                    >重置密码</el-dropdown-item>
+                  <el-dropdown-item command="handleAuthRole" icon="el-icon-circle-check"
+                                    >分配角色</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -286,7 +297,7 @@
 
 <script>
 import { treeselect } from '@/api/system/dept'
-import { listUser, getUser, addUser, updateUser, delUser } from '@/api/system/user'
+import { listUser, getUser, addUser, updateUser, delUser, resetUserPwd } from '@/api/system/user'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
@@ -514,6 +525,38 @@ export default {
         this.getList()
         this.$modal.msgSuccess('删除成功')
       }).catch(() => {})
+    },
+    // 更多操作触发
+    handleCommand (command, row) {
+      switch (command) {
+        case 'handleResetPwd':
+          this.handleResetPwd(row)
+          break
+        case 'handleAuthRole':
+          this.handleAuthRole(row)
+          break
+        default:
+          break
+      }
+    },
+    /** 重置密码按钮操作 */
+    handleResetPwd (row) {
+      this.$prompt('请输入"' + row.userName + '"的新密码', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        closeOnClickModal: false,
+        inputPattern: /^.{5,20}$/,
+        inputErrorMessage: '用户密码长度必须介于 5 和 20 之间'
+      }).then(({ value }) => {
+        resetUserPwd(row.userId, value).then(response => {
+          this.$modal.msgSuccess('修改成功，新密码是：' + value)
+        })
+      }).catch(() => {})
+    },
+    /** 分配角色操作 */
+    handleAuthRole: function (row) {
+      const userId = row.userId;
+      this.$router.push("/system/user-auth/role/" + userId);
     }
   }
 }

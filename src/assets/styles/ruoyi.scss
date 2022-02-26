@@ -11,3 +11,10 @@
   right: 0;
   position: absolute;
 }
+
+/** 表格更多操作下拉样式 */
+.el-table .el-dropdown-link {
+  cursor: pointer;
+  color: #409EFF;
+  margin-left: 5px;
+}
