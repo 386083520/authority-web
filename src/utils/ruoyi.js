@@ -110,3 +110,8 @@ export function parseTime (time, pattern) {
   })
   return timeStr
 }
+
+export function handleTree (data, id, parentId, children) {
+  var tree = []
+  return tree
+}

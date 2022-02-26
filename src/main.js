@@ -11,10 +11,12 @@ import RightToolbar from '@/components/RightToolbar'
 import Pagination from '@/components/Pagination'
 // 字典数据组件
 import DictData from '@/components/DictData'
+// 字典标签组件
+import DictTag from '@/components/DictTag'
 
 import { getConfigKey } from '@/api/system/config'
 
-import { addDateRange, resetForm, parseTime } from '@/utils/ruoyi'
+import { addDateRange, resetForm, parseTime, handleTree } from '@/utils/ruoyi'
 
 import plugins from './plugins' // plugins
 
@@ -28,11 +30,13 @@ Vue.config.productionTip = false
 
 Vue.component('RightToolbar', RightToolbar)
 Vue.component('Pagination', Pagination)
+Vue.component('DictTag', DictTag)
 
 Vue.prototype.addDateRange = addDateRange
 Vue.prototype.resetForm = resetForm
 Vue.prototype.getConfigKey = getConfigKey
 Vue.prototype.parseTime = parseTime
+Vue.prototype.handleTree = handleTree
 
 Vue.use(Element)
 Vue.use(plugins)
