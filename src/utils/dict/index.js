@@ -27,7 +27,6 @@ export default function (Vue, options) {
           }
         })
       })
-      console.log('gsdthis.dict', this.dict)
     }
   })
 }

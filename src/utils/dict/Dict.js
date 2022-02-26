@@ -21,7 +21,6 @@ export default class Dict {
     }
     const ps = []
     this._dictMetas = opts.types.map(t => DictMeta.parse(t))
-    console.log('gsd_dictMetas', this._dictMetas)
     this._dictMetas.forEach(dictMeta => {
       const type = dictMeta.type
       Vue.set(this.label, type, {})
@@ -37,10 +36,8 @@ export default class Dict {
 
 function loadDict (dict, dictMeta) {
   return dictMeta.request(dictMeta).then(response => {
-    console.log('gsdresponse', response)
     const type = dictMeta.type
     const dicts = dictMeta.responseConverter(response, dictMeta)
-    console.log('gsddicts', dicts)
     dict.type[type].splice(0, Number.MAX_SAFE_INTEGER, ...dicts)
     dicts.forEach(d => {
       Vue.set(dict.label[type], d.value, d.label)

@@ -5,14 +5,12 @@ const whiteList = ['/login']
 router.beforeEach((to, from, next) => {
   if (getToken()) {
     if (to.path === '/login') {
-      console.log('gsd111')
       next({ path: '/' })
     } else {
       if (store.getters.roles.length === 0) {
         // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetInfo').then(() => {
           store.dispatch('GenerateRoutes').then(accessRoutes => {
-            console.log('gsdaccessRoutes', accessRoutes)
             router.addRoutes(accessRoutes) // 动态添加可访问路由表
             next({ ...to })
           })

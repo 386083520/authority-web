@@ -81,7 +81,6 @@ export default {
   watch: {
     $route: {
       handler: function (route) {
-        console.log('gsdroute', route)
         this.redirect = route.query && route.query.redirect
       },
       immediate: true
@@ -102,7 +101,6 @@ export default {
     },
     handleLogin () {
       this.$refs.loginForm.validate(valid => {
-        console.log('gsdvalid', valid)
         if (valid) {
           if (this.loginForm.rememberMe) {
           } else {

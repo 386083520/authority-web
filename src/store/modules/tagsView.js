@@ -10,7 +10,6 @@ const mutations = {
         title: view.meta.title || 'no-name'
       })
     )
-    console.log('gsdvisitedViews', state.visitedViews)
   },
   DEL_VISITED_VIEW: (state, view) => {
     for (const [i, v] of state.visitedViews.entries()) {

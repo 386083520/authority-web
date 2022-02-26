@@ -10,7 +10,6 @@ export function addDateRange (params, dateRange, propName) {
     search.params['begin' + propName] = dateRange[0]
     search.params['end' + propName] = dateRange[1]
   }
-  console.log('gsdsearch', search)
   return search
 }
 
@@ -42,14 +41,12 @@ export function resetForm (refName) {
  * @param {*} params  参数
  */
 export function tansParams (params) {
-  console.log('gsdparams', params)
   let result = ''
   for (const propName of Object.keys(params)) {
     const value = params[propName]
     var part = encodeURIComponent(propName) + '='
     if (value !== null && typeof (value) !== 'undefined') {
       if (typeof value === 'object') {
-        console.log('gsdvalue', value)
         for (const key of Object.keys(value)) {
           if (value[key] !== null && typeof (value[key]) !== 'undefined') {
             const params = propName + '[' + key + ']'
