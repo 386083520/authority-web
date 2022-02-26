@@ -14,7 +14,7 @@ import DictData from '@/components/DictData'
 
 import { getConfigKey } from '@/api/system/config'
 
-import { addDateRange, resetForm } from '@/utils/ruoyi'
+import { addDateRange, resetForm, parseTime } from '@/utils/ruoyi'
 
 import plugins from './plugins' // plugins
 
@@ -32,6 +32,7 @@ Vue.component('Pagination', Pagination)
 Vue.prototype.addDateRange = addDateRange
 Vue.prototype.resetForm = resetForm
 Vue.prototype.getConfigKey = getConfigKey
+Vue.prototype.parseTime = parseTime
 
 Vue.use(Element)
 Vue.use(plugins)

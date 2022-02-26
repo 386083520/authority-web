@@ -95,7 +95,7 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-    <el-table :data="roleList" @selection-change="handleSelectionChange">
+    <el-table :data="roleList" @selection-change="handleSelectionChange" v-loading="loading">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="角色编号" prop="roleId" width="120" />
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" />
@@ -155,11 +155,17 @@
 </template>
 
 <script>
+import { listRole, delRole, changeRoleStatus } from '@/api/system/role'
 export default {
   name: 'role',
   dicts: ['sys_normal_disable'],
+  created () {
+    this.getList()
+  },
   data () {
     return {
+      // 遮罩层
+      loading: true,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -179,23 +185,76 @@ export default {
       // 角色表格数据
       roleList: [],
       // 总条数
-      total: 0
+      total: 0,
+      // 选中数组
+      ids: []
     }
   },
   methods: {
     handleQuery () {
+      this.queryParams.pageNum = 1
+      this.getList()
     },
     resetQuery () {
+      this.dateRange = []
+      this.resetForm('queryForm')
+      this.handleQuery()
     },
     handleAdd () {
     },
     handleUpdate () {},
-    handleDelete () {},
+    handleDelete (row) {
+      const roleIds = row.roleId || this.ids
+      this.$modal.confirm('是否确认删除角色编号为"' + roleIds + '"的数据项？').then(function () {
+        return delRole(roleIds)
+      }).then(() => {
+        this.getList()
+        this.$modal.msgSuccess('删除成功')
+      }).catch(() => {})
+    },
     handleExport () {},
-    getList () {},
-    handleSelectionChange () {},
-    handleStatusChange () {},
-    handleCommand () {}
+    getList () {
+      this.loading = true
+      listRole(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+        this.roleList = response.rows
+        this.total = response.total
+        this.loading = false
+      }
+      )
+    },
+    handleSelectionChange (selection) {
+      this.ids = selection.map(item => item.roleId)
+      this.single = selection.length !== 1
+      this.multiple = !selection.length
+    },
+    handleStatusChange (row) {
+      const text = row.status === '0' ? '启用' : '停用'
+      this.$modal.confirm('确认要"' + text + '""' + row.roleName + '"角色吗？').then(function () {
+        return changeRoleStatus(row.roleId, row.status)
+      }).then(() => {
+        this.$modal.msgSuccess(text + '成功')
+      }).catch(function () {
+        row.status = row.status === '0' ? '1' : '0'
+      })
+    },
+    handleCommand (command, row) {
+      switch (command) {
+        case "handleDataScope":
+          this.handleDataScope(row);
+          break;
+        case "handleAuthUser":
+          this.handleAuthUser(row);
+          break;
+        default:
+          break;
+      }
+    },
+    handleDataScope() {
+    },
+    handleAuthUser(row) {
+      const roleId = row.roleId;
+      this.$router.push("/system/role-auth/user/" + roleId);
+    }
   }
 }
 </script>
