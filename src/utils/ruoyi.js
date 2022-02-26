@@ -112,6 +112,40 @@ export function parseTime (time, pattern) {
 }
 
 export function handleTree (data, id, parentId, children) {
+  const config = {
+    id: id || 'id',
+    parentId: parentId || 'parentId',
+    childrenList: children || 'children'
+  }
   var tree = []
+  var nodeIds = {}
+  var childrenListMap = {}
+  for (const d of data) {
+    const parentId = d[config.parentId]
+    if (childrenListMap[parentId] == null) {
+      childrenListMap[parentId] = []
+    }
+    childrenListMap[parentId].push(d)
+    nodeIds[d[config.id]] = d
+  }
+  for (const d of data) {
+    const parentId = d[config.parentId]
+    if (nodeIds[parentId] == null) {
+      tree.push(d)
+    }
+  }
+  for (const t of tree) {
+    adaptToChildrenList(t)
+  }
+  function adaptToChildrenList (o) {
+    if (childrenListMap[o[config.id]] !== null) {
+      o[config.childrenList] = childrenListMap[o[config.id]]
+    }
+    if (o[config.childrenList]) {
+      for (const c of o[config.childrenList]) {
+        adaptToChildrenList(c)
+      }
+    }
+  }
   return tree
 }
