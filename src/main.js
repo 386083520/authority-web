@@ -12,7 +12,7 @@ import Pagination from '@/components/Pagination'
 // 字典数据组件
 import DictData from '@/components/DictData'
 
-import { addDateRange } from '@/utils/ruoyi'
+import { addDateRange, resetForm } from '@/utils/ruoyi'
 
 import plugins from './plugins' // plugins
 
@@ -28,6 +28,7 @@ Vue.component('RightToolbar', RightToolbar)
 Vue.component('Pagination', Pagination)
 
 Vue.prototype.addDateRange = addDateRange
+Vue.prototype.resetForm = resetForm
 
 Vue.use(Element)
 Vue.use(plugins)

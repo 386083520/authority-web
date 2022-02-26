@@ -27,7 +27,7 @@
       </el-col>
       <!--用户数据-->
       <el-col :span="20">
-        <el-form :inline="true" label-width="68px" :model="queryParams">
+        <el-form :inline="true" label-width="68px" :model="queryParams" ref="queryForm">
           <el-form-item label="用户名称" prop="userName">
             <el-input
               v-model="queryParams.userName"
@@ -77,8 +77,8 @@
             ></el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" size="mini">搜索</el-button>
-            <el-button icon="el-icon-refresh" size="mini">重置</el-button>
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
         <el-row :gutter="10" class="mb8">
@@ -222,9 +222,19 @@ export default {
   methods: {
     /** 搜索按钮操作 */
     handleQuery () {
+      this.queryParams.pageNum = 1
+      this.getList()
+    },
+    /** 重置按钮操作 */
+    resetQuery () {
+      this.dateRange = []
+      this.resetForm('queryForm')
+      this.handleQuery()
     },
     // 节点单击事件
     handleNodeClick (data) {
+      this.queryParams.deptId = data.id
+      this.handleQuery()
     },
     /** 查询部门下拉树结构 */
     getTreeselect () {
