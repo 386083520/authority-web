@@ -97,6 +97,8 @@
               plain
               icon="el-icon-edit"
               size="mini"
+              :disabled="single"
+              @click="handleUpdate"
             >修改</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -105,6 +107,8 @@
               plain
               icon="el-icon-delete"
               size="mini"
+              :disabled="multiple"
+              @click="handleDelete"
             >删除</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -151,16 +155,18 @@
             align="center"
             width="160"
             class-name="small-padding fixed-width">
-            <template>
+            <template slot-scope="scope" v-if="scope.row.userId !== 1">
               <el-button
                 size="mini"
                 type="text"
                 icon="el-icon-edit"
+                @click="handleUpdate(scope.row)"
               >修改</el-button>
               <el-button
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
+                @click="handleDelete(scope.row)"
               >删除</el-button>
             </template>
           </el-table-column>
@@ -280,7 +286,7 @@
 
 <script>
 import { treeselect } from '@/api/system/dept'
-import { listUser, getUser, addUser, updateUser } from '@/api/system/user'
+import { listUser, getUser, addUser, updateUser, delUser } from '@/api/system/user'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
@@ -302,6 +308,8 @@ export default {
   },
   data () {
     return {
+      // 选中数组
+      ids: [],
       // 日期范围
       dateRange: [],
       // 部门名称
@@ -376,7 +384,11 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      // 非单个禁用
+      single: true,
+      // 非多个禁用
+      multiple: true
     }
   },
   methods: {
@@ -409,6 +421,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange (selection) {
+      this.ids = selection.map(item => item.userId)
+      this.single = selection.length !== 1
+      this.multiple = !selection.length
     },
     /** 查询用户列表 */
     getList () {
@@ -419,8 +434,8 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd () {
-      this.reset();
-      this.getTreeselect();
+      this.reset()
+      this.getTreeselect()
       getUser().then(response => {
         console.log('gsdresponse', response)
         this.postOptions = response.posts
@@ -431,7 +446,7 @@ export default {
       })
     },
     // 表单重置
-    reset() {
+    reset () {
       this.form = {
         userId: undefined,
         deptId: undefined,
@@ -441,32 +456,64 @@ export default {
         phonenumber: undefined,
         email: undefined,
         sex: undefined,
-        status: "0",
+        status: '0',
         remark: undefined,
         postIds: [],
         roleIds: []
-      };
-      this.resetForm("form");
+      }
+      this.resetForm('form')
     },
     /** 提交按钮 */
-    submitForm: function() {
-      this.$refs["form"].validate(valid => {
+    submitForm: function () {
+      this.$refs.form.validate(valid => {
         if (valid) {
-          if (this.form.userId != undefined) {
+          if (this.form.userId !== undefined) {
             updateUser(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          }else {
+              this.$modal.msgSuccess('修改成功')
+              this.open = false
+              this.getList()
+            })
+          } else {
             addUser(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
+              this.$modal.msgSuccess('新增成功')
+              this.open = false
+              this.getList()
             })
           }
         }
       })
+    },
+    // 取消按钮
+    cancel () {
+      this.open = false
+      this.reset()
+    },
+    /** 修改按钮操作 */
+    handleUpdate (row) {
+      this.reset()
+      this.getTreeselect()
+      const userId = row.userId || this.ids
+      console.log('gsd11', userId)
+      getUser(userId).then(response => {
+        this.form = response.data
+        this.postOptions = response.posts
+        this.roleOptions = response.roles
+        this.form.postIds = response.postIds
+        this.form.roleIds = response.roleIds
+        this.open = true
+        this.title = '修改用户'
+        this.form.password = ''
+      })
+    },
+    /** 删除按钮操作 */
+    handleDelete (row) {
+      const userIds = row.userId || this.ids
+      this.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function () {
+        return delUser(userIds)
+      }).then(() => {
+        this.getList()
+        this.$modal.msgSuccess('删除成功')
+      }).catch(() => {})
     }
   }
 }

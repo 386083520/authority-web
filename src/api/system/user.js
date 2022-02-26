@@ -19,7 +19,7 @@ export function getUser (userId) {
 }
 
 // 新增用户
-export function addUser(data) {
+export function addUser (data) {
   return request({
     url: '/system/user',
     method: 'post',
@@ -28,10 +28,18 @@ export function addUser(data) {
 }
 
 // 修改用户
-export function updateUser(data) {
+export function updateUser (data) {
   return request({
     url: '/system/user',
     method: 'put',
     data: data
+  })
+}
+
+// 删除用户
+export function delUser (userId) {
+  return request({
+    url: '/system/user/' + userId,
+    method: 'delete'
   })
 }
