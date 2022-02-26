@@ -29,3 +29,29 @@ export function changeRoleStatus (roleId, status) {
     data: data
   })
 }
+
+// 新增角色
+export function addRole (data) {
+  return request({
+    url: '/system/role',
+    method: 'post',
+    data: data
+  })
+}
+
+// 查询角色详细
+export function getRole (roleId) {
+  return request({
+    url: '/system/role/' + roleId,
+    method: 'get'
+  })
+}
+
+// 修改角色
+export function updateRole (data) {
+  return request({
+    url: '/system/role',
+    method: 'put',
+    data: data
+  })
+}

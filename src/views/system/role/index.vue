@@ -151,11 +151,63 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+    <!-- 添加或修改角色配置对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model="form.roleName" placeholder="请输入角色名称" />
+        </el-form-item>
+        <el-form-item prop="roleKey">
+          <span slot="label">
+            <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasRole('admin')`)" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+            权限字符
+          </span>
+          <el-input v-model="form.roleKey" placeholder="请输入权限字符" />
+        </el-form-item>
+        <el-form-item label="角色顺序" prop="roleSort">
+          <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-radio-group v-model="form.status">
+            <el-radio
+              v-for="dict in dict.type.sys_normal_disable"
+              :key="dict.value"
+              :label="dict.value"
+            >{{dict.label}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="菜单权限">
+          <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event, 'menu')">展开/折叠</el-checkbox>
+          <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event, 'menu')">全选/全不选</el-checkbox>
+          <el-checkbox v-model="form.menuCheckStrictly" @change="handleCheckedTreeConnect($event, 'menu')">父子联动</el-checkbox>
+          <el-tree
+            class="tree-border"
+            :data="menuOptions"
+            show-checkbox
+            ref="menu"
+            node-key="id"
+            :check-strictly="!form.menuCheckStrictly"
+            empty-text="加载中，请稍候"
+            :props="defaultProps"
+          ></el-tree>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listRole, delRole, changeRoleStatus } from '@/api/system/role'
+import { listRole, delRole, changeRoleStatus, addRole, getRole, updateRole } from '@/api/system/role'
+import { treeselect as menuTreeselect, roleMenuTreeselect } from '@/api/system/menu'
 export default {
   name: 'role',
   dicts: ['sys_normal_disable'],
@@ -187,7 +239,33 @@ export default {
       // 总条数
       total: 0,
       // 选中数组
-      ids: []
+      ids: [],
+      // 菜单列表
+      menuOptions: [],
+      // 弹出层标题
+      title: '',
+      // 是否显示弹出层
+      open: false,
+      // 表单参数
+      form: {},
+      // 表单校验
+      rules: {
+        roleName: [
+          { required: true, message: '角色名称不能为空', trigger: 'blur' }
+        ],
+        roleKey: [
+          { required: true, message: '权限字符不能为空', trigger: 'blur' }
+        ],
+        roleSort: [
+          { required: true, message: '角色顺序不能为空', trigger: 'blur' }
+        ]
+      },
+      menuExpand: false,
+      menuNodeAll: false,
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
     }
   },
   methods: {
@@ -200,9 +278,63 @@ export default {
       this.resetForm('queryForm')
       this.handleQuery()
     },
-    handleAdd () {
+    // 表单重置
+    reset () {
+      this.menuExpand = false
+      this.menuNodeAll = false
+      this.form = {
+        roleId: undefined,
+        roleName: undefined,
+        roleKey: undefined,
+        roleSort: 0,
+        status: '0',
+        menuIds: [],
+        deptIds: [],
+        menuCheckStrictly: true,
+        deptCheckStrictly: true,
+        remark: undefined
+      }
+      this.resetForm('form')
     },
-    handleUpdate () {},
+    /** 查询菜单树结构 */
+    getMenuTreeselect () {
+      menuTreeselect().then(response => {
+        this.menuOptions = response.data
+      })
+    },
+    handleAdd () {
+      this.reset()
+      this.getMenuTreeselect()
+      this.open = true
+      this.title = '添加角色'
+    },
+    /** 根据角色ID查询菜单树结构 */
+    getRoleMenuTreeselect (roleId) {
+      return roleMenuTreeselect(roleId).then(response => {
+        this.menuOptions = response.menus
+        return response
+      })
+    },
+    handleUpdate (row) {
+      this.reset()
+      const roleId = row.roleId || this.ids
+      const roleMenu = this.getRoleMenuTreeselect(roleId)
+      getRole(roleId).then(response => {
+        this.form = response.data
+        this.open = true
+        this.$nextTick(() => {
+          roleMenu.then(res => {
+            const checkedKeys = res.checkedKeys
+            checkedKeys.forEach((v) => {
+              this.$nextTick(() => {
+                this.$refs.menu.setChecked(v, true, false)
+              })
+            })
+          })
+        })
+        this.title = '修改角色'
+      })
+    },
     handleDelete (row) {
       const roleIds = row.roleId || this.ids
       this.$modal.confirm('是否确认删除角色编号为"' + roleIds + '"的数据项？').then(function () {
@@ -239,21 +371,84 @@ export default {
     },
     handleCommand (command, row) {
       switch (command) {
-        case "handleDataScope":
-          this.handleDataScope(row);
-          break;
-        case "handleAuthUser":
-          this.handleAuthUser(row);
-          break;
+        case 'handleDataScope':
+          this.handleDataScope(row)
+          break
+        case 'handleAuthUser':
+          this.handleAuthUser(row)
+          break
         default:
-          break;
+          break
       }
     },
-    handleDataScope() {
+    handleDataScope () {
     },
-    handleAuthUser(row) {
-      const roleId = row.roleId;
-      this.$router.push("/system/role-auth/user/" + roleId);
+    handleAuthUser (row) {
+      const roleId = row.roleId
+      this.$router.push('/system/role-auth/user/' + roleId)
+    },
+    // 树权限（展开/折叠）
+    handleCheckedTreeExpand (value, type) {
+      if (type === 'menu') {
+        const treeList = this.menuOptions
+        for (let i = 0; i < treeList.length; i++) {
+          this.$refs.menu.store.nodesMap[treeList[i].id].expanded = value
+        }
+      } else if (type === 'dept') {
+
+      }
+    },
+    // 树权限（全选/全不选）
+    handleCheckedTreeNodeAll (value, type) {
+      if (type === 'menu') {
+        this.$refs.menu.setCheckedNodes(value ? this.menuOptions : [])
+      } else if (type === 'dept') {
+
+      }
+    },
+    // 树权限（父子联动）
+    handleCheckedTreeConnect (value, type) {
+      if (type === 'menu') {
+        this.form.menuCheckStrictly = !!value
+      } else if (type === 'dept') {
+
+      }
+    },
+    // 所有菜单节点数据
+    getMenuAllCheckedKeys () {
+      // 目前被选中的菜单节点
+      const checkedKeys = this.$refs.menu.getCheckedKeys()
+      // 半选中的菜单节点
+      const halfCheckedKeys = this.$refs.menu.getHalfCheckedKeys()
+      checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys)
+      return checkedKeys
+    },
+    /** 提交按钮 */
+    submitForm: function () {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          if (this.form.roleId !== undefined) {
+            this.form.menuIds = this.getMenuAllCheckedKeys()
+            updateRole(this.form).then(response => {
+              this.$modal.msgSuccess('修改成功')
+              this.open = false
+              this.getList()
+            })
+          } else {
+            this.form.menuIds = this.getMenuAllCheckedKeys()
+            addRole(this.form).then(response => {
+              this.$modal.msgSuccess('新增成功')
+              this.open = false
+              this.getList()
+            })
+          }
+        }
+      })
+    },
+    // 取消按钮
+    cancel () {
+      this.open = false
+      this.reset()
     }
   }
 }
